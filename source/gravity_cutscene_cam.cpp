@@ -2,10 +2,14 @@
 
 bool CutsceneCam::CalculateTransform(Matrix4x3& res, Camera& cam, Player& player)
 {
-	const Matrix3x3& m = ActorExtension::Get(player).GetGravityMatrix();
-	res.Linear() = m(cam.camMat.Linear().Transpose());
-	res.c3 = m(cam.pos - player.pos) + player.pos;
+	if (RUNNING_KUPPA_SCRIPT)
+	{
+		const Matrix3x3& m = ActorExtension::Get(player).GetGravityMatrix();
+		transform.Linear() = m(cam.camMat.Linear().Transpose());
+		transform.c3 = m(cam.pos - player.pos) + player.pos;
+	}
 
+	res = transform;
 	return RUNNING_KUPPA_SCRIPT;
 }
 
