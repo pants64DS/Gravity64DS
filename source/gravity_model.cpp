@@ -77,8 +77,6 @@ repl_02015d88: @ in ShadowModel::RenderAll
 	ldr    r2, [r6, #0x1c]
 	mov    r2, r2, lsr #8
 	mov    r2, r2, lsl #2
-	ldrb   r3, [r6, #0x1c]
-	str    r3, [r6, #0x1c]
 	add    r14, r14, #0x18
 	b      TransformRenderingShadow
 )");
