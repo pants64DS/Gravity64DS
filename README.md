@@ -11,6 +11,11 @@ effectively changing the directions of "up" and "down" based on their locations.
 It also includes a fully custom camera system designed to work well on planets
 and allows smooth and seamless camera transitions when moving between gravity fields.
 
+## Tech Demo
+
+A tech demo showcasing the gravity engine has been released.
+You can download it on the [Releases page](https://github.com/pants64DS/Gravity64DS/releases).
+
 ## Gravity fields
 
 A gravity field defines three properties for each point in the 3D space:
@@ -191,6 +196,7 @@ please consider using the [heap expansion code](https://github.com/pants64DS/SM6
 
 The gravity engine is linked to the original code of the game using
 [NSMBe](https://github.com/pants64DS/NSMB-Editor) patches.
+Only the European version of SM64DS is supported.
 Before compiling the code, make sure you have [devkitPro](https://devkitpro.org/) installed.
 You may use any existing setup for inserting code with NSMBe,
 but it's recommended that your linker script is similar to
@@ -220,7 +226,7 @@ make sure you have opened it in
 and "toggled it suitable" for NSMBe patching
 by clicking on "ASM Hacking" and then "Toggle Suitability for NSMBe ASM Patching".
 To compile and insert the NSMBe patches,
-put your ROM in the same directory as the makefile,
+put your SM64DS ROM in the same directory as the makefile,
 open it in NSMBe and click on "Run 'make' and insert" in the "Tools/Options" tab.
 
 ## Pseudo-mesh sphere
