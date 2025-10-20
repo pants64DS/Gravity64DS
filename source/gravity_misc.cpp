@@ -96,22 +96,6 @@ void repl_020f0bbc(Matrix4x3& transform, Fix12i x, Fix12i y, Fix12i z)
 		transform.Linear() = INV_VIEW_MATRIX_ASR_3.Linear();
 }
 
-// make Giant Fire Piranha Plants spawn stars at the star marker (like the 5 secrets)
-void repl_0212e1f0_ov_54(unsigned actorID, unsigned param1, Vector3& pos, const Vector3_16* rot, int areaID, int deathTableID)
-{
-	const char starID = param1 & 0xf;
-
-	for (StarMarker& marker : Actor::Iterate<StarMarker>())
-	{
-		if (marker.starID != starID) continue;
-
-		pos = Vector3::Temp(marker.pos.x, marker.pos.y + 300._f, marker.pos.z);
-		PowerStar* star = Actor::Spawn<PowerStar>(param1, pos, rot, areaID, deathTableID);
-
-		if (star) static_cast<PowerStar*>(star)->AddStarMarker();
-	}
-}
-
 asm(R"(
 repl_020c4e20_ov_02:
 	mov  r1, r6
