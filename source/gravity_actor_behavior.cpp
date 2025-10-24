@@ -220,6 +220,8 @@ extern "C" bool AfterShowMessage2(Player& player)
 	if (behavingActor && behavingActor != &player)
 	{
 		const ActorExtension& playerExtension = ActorExtension::Get(player);
+		if (playerExtension.IsInTrivialField()) return true;
+
 		const Matrix3x3& playerMatrix = playerExtension.GetGravityMatrix();
 		const Matrix3x3& actorMatrix = ActorExtension::Get(*behavingActor).GetGravityMatrix();
 
