@@ -78,17 +78,6 @@ void DestructExtension(const Actor& actor)
 	ActorExtension::Get(actor).~ActorExtension();
 }
 
-ActorExtension& ActorExtension::Get(const Actor& actor)
-{
-	const std::size_t offset = Memory::gameHeapPtr->Sizeof(&actor) - sizeof(ActorExtension);
-
-	return const_cast<ActorExtension&>(
-		*reinterpret_cast<const ActorExtension*>(
-			reinterpret_cast<const std::byte*>(&actor) + offset
-		)
-	);
-}
-
 int ActorExtension::CalculateUpVector(Vector3_Q24& __restrict__ res, const Vector3& pos, Sqaerp& sqaerp) const
 {
 	AssureUnaliased(res) = Vector3_Q24::Raw(currMatrix.c1).NormalizedTwice();

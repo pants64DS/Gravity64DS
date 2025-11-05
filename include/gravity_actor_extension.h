@@ -139,7 +139,17 @@ public:
 		return GetGravityField().IsTrivial() && angleToNewField == 0;
 	}
 
-	static ActorExtension& Get(const Actor& actor);
+	[[gnu::noinline]]
+	static ActorExtension& Get(const Actor& actor)
+	{
+		const std::size_t offset = Memory::gameHeapPtr->Sizeof(&actor) - sizeof(ActorExtension);
+
+		return const_cast<ActorExtension&>(
+			*reinterpret_cast<const ActorExtension*>(
+				reinterpret_cast<const std::byte*>(&actor) + offset
+			)
+		);
+	}
 
 	[[gnu::always_inline]]
 	void SetProperties(Actor& pivotActor, const ActorExtension& behavingExtension)
