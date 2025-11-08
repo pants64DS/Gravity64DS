@@ -136,9 +136,34 @@ void RedirectDelta(Actor& actor, ActorExtension& extension);
 
 bool repl_020e4458_ov_02(Player& player) // before updating the player's model transform
 {
-	RedirectDelta(player, ActorExtension::Get(player));
+	auto& extension = ActorExtension::Get(player);
+	RedirectDelta(player, extension);
 
-	return player.UpdateBeingHeld();
+	const bool held = player.UpdateBeingHeld();
+	if (held) extension.savedPos = player.pos;
+
+	return held;
+}
+
+asm(R"(
+nsub_020e4228_ov_02:
+	mov     r0, r4
+	bl      TransformCarryMatrix
+	mov     r0, #0x500
+	orr     r0, #0x0bc
+	b       0x020e422c
+)");
+
+extern "C" void TransformCarryMatrix(Player& player)
+{
+	const auto& playerExtension = ActorExtension::Get(player);
+	const auto& holdingExtension = ActorExtension::Get(*player.holdingActor);
+	const Matrix3x3& g0 = holdingExtension.GetGravityMatrix();
+	const Matrix3x3& g1 = playerExtension.GetGravityMatrix();
+	const Vector3 pivot = holdingExtension.GetRealValue<&Actor::pos>() >> 3;
+
+	MATRIX_SCRATCH_PAPER.Linear() = g1.Transpose()(g0(MATRIX_SCRATCH_PAPER.Linear()));
+	MATRIX_SCRATCH_PAPER.c3.RotateAround(pivot, g0);
 }
 
 asm(R"(
