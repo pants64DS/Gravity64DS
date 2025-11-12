@@ -1,27 +1,48 @@
 #include "gravity_actor_list.h"
 #include "gravity_field.h"
 #include "gravity_actor_extension.h"
+#include <optional>
 
-template<auto... keys>
-constexpr bool In(auto key) { return (... || (key == keys)); }
+constinit std::optional<ActorList::Node::Settings> nextActorSettings;
+
+// Implements ActorList::SetNextSettings (see nsub_02010e6c)
+void nsub_02010e70(ActorList::Node::Settings settings)
+{
+	nextActorSettings = settings;
+}
+
+struct
+{
+	u16 actorID;
+	ActorList::Node::Settings settings;
+}
+constexpr settingsArray[] = {
+	{0x0b4, {0, 0, 0}},
+	{0x0fe, {0, 1, 1}},
+	{0x121, {0, 0, 0}},
+	{0x14a, {1, 0, 0}},
+	{0x15d, {0, 0, 0}},
+};
+
+static ActorList::Node::Settings GetSettings(const Actor& actor)
+{
+	if (nextActorSettings)
+	{
+		const ActorList::Node::Settings res = *nextActorSettings;
+		nextActorSettings.reset();
+		return res;
+	}
+
+	for (auto& entry : settingsArray)
+		if (entry.actorID == actor.actorID)
+			return entry.settings;
+
+	return {0, 1, 0};
+}
 
 [[gnu::target("thumb")]]
 ActorList::Node::Node(Actor& actor):
-	alwaysInDefaultField(In<
-		0x14a  // number
-	>(actor.actorID)),
-
-	shouldBeTransformed(!In<
-		0xb4,  // star marker
-		0x121, // red coin
-		0x14a, // number
-		0x15d, // exit warp
-		0x233  // pseudo-mesh sphere
-	>(actor.actorID)),
-	canSpawnAsSubActor(In<
-		0xfe   // piranha plant flame
-	>(actor.actorID)),
-
+	settings(GetSettings(actor)),
 	gravityField(GravityField::GetFieldFor(actor, *this)),
 
 	next(gravityField.get().GetActorList().GetNextOfNewNode(*this)),

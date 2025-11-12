@@ -16,6 +16,14 @@ public:
 
 	class Node // only to be used as a base class of ActorExtension
 	{
+	public:
+		struct Settings
+		{
+			bool alwaysInDefaultField = false;
+			bool shouldBeTransformed = true;
+			bool canSpawnAsSubActor = false;
+		};
+
 		friend class ActorList;
 
 		Node(const Node&) = delete;
@@ -23,9 +31,7 @@ public:
 		Node& operator=(const Node&) = delete;
 		Node& operator=(Node&&) = delete;
 
-		bool alwaysInDefaultField;
-		bool shouldBeTransformed;
-		bool canSpawnAsSubActor;
+		Settings settings;
 		std::reference_wrapper<GravityField> gravityField;
 		std::reference_wrapper<Node> next;
 		std::reference_wrapper<Node> prev;
@@ -37,15 +43,17 @@ public:
 		constexpr void SetGravityField(GravityField& field) { gravityField = field; }
 
 	public:
-		constexpr bool AlwaysInDefaultField() const { return alwaysInDefaultField; }
-		constexpr bool ShouldBeTransformed()  const { return shouldBeTransformed; }
-		constexpr bool CanSpawnAsSubActor()   const { return canSpawnAsSubActor; }
+		constexpr bool AlwaysInDefaultField() const { return settings.alwaysInDefaultField; }
+		constexpr bool ShouldBeTransformed()  const { return settings.shouldBeTransformed; }
+		constexpr bool CanSpawnAsSubActor()   const { return settings.canSpawnAsSubActor; }
 
 		constexpr auto OtherNodes() { return Range(*this); }
 
 		constexpr GravityField& GetGravityField() { return gravityField; }
 		constexpr const GravityField& GetGravityField() const { return gravityField; }
 	};
+
+	static void SetNextSettings(Node::Settings settings);
 
 	class Iterator
 	{
@@ -87,3 +95,5 @@ private:
 	Node& GetNextOfNewNode(Node& newNode);
 	Node& GetPrevOfNewNode(Node& newNode);
 };
+
+asm("_ZN9ActorList15SetNextSettingsENS_4Node8SettingsE = 0x02010e70");
