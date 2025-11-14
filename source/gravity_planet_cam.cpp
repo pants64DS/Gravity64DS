@@ -16,6 +16,7 @@ PlanetCam::PlanetCam(
 	preCutsceneAngleZ(0),
 	camPos(INV_VIEW_MATRIX_ASR_3.c3 << 3),
 	touchedGroundAltitude(0._f),
+	smoothedGroundAltitude(0._f),
 	altitudeInterp(cam.flags & Camera::ZOOMED_OUT ? 1._f : 0._f),
 	rotationStopped(false),
 	canPlayStopSound(true),
@@ -391,13 +392,15 @@ bool PlanetCam::CalculateTransform(Matrix4x3& res, Camera& cam, Player& player)
 	if (player.wmClsn.IsOnGround() && &ActorExtension::Get(player).GetGravityField() == field)
 		touchedGroundAltitude = playerAltitude;
 
+	Fix12i groundAltitude;
+	if (player.floorY == Fix12i::min)
+		groundAltitude = touchedGroundAltitude;
+	else
+		groundAltitude = playerAltitude - (player.pos.y - player.floorY);
+
 	if (active && !warping)
 	{
 		const Fix12i maxAltitudeDiff = GetSetting<MAX_ALTITUDE_DIFF>();
-
-		const Fix12i groundAltitude = player.floorY == Fix12i::min ? Fix12i::min
-			: playerAltitude - (player.pos.y - player.floorY);
-
 		const Fix12i targetAltitude = std::max(touchedGroundAltitude, groundAltitude) + maxAltitudeDiff;
 
 		camAltitude.ApproachLinear(targetAltitude, altitudeApproachSpeed);
@@ -415,10 +418,11 @@ bool PlanetCam::CalculateTransform(Matrix4x3& res, Camera& cam, Player& player)
 	if (!warping) ReactToInput(cam, player, playerUp, active);
 
 	altitudeInterp.ApproachLinear(cam.flags & Camera::ZOOMED_OUT ? 1._f : 0._f, 0.08_f);
+	smoothedGroundAltitude.ApproachLinear(groundAltitude, 50._f);
 
 	const Fix12i altitude = LerpNoinline(
 		camAltitude,
-		touchedGroundAltitude + ((camAltitude - touchedGroundAltitude)*3 >> 1),
+		smoothedGroundAltitude + ((camAltitude - smoothedGroundAltitude)*3 >> 1),
 		SmoothStep(altitudeInterp)
 	);
 

@@ -86,6 +86,7 @@ class PlanetCam : public CamCtrl
 	Vector3_Q24 yAxis;
 
 	Fix12i touchedGroundAltitude;
+	Fix12i smoothedGroundAltitude;
 	Fix12i camAltitude;
 	Fix12i targetAltitude;
 	Fix12s altitudeInterp;
