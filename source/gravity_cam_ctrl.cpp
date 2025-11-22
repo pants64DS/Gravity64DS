@@ -258,7 +258,7 @@ extern "C" s32 AfterCamBehavior(Camera& cam)
 extern "C" void PlaySoundWhenVanillaCamActive(u32 soundID)
 {
 	if (CamCtrl::IsVanillaCamActive())
-		Sound::UnkPlaySoundFunc(soundID);
+		Sound::PlayArchive2_2D_Alt(soundID);
 }
 
 asm("repl_0200a548 = PlaySoundWhenVanillaCamActive"); // manual reset start sound

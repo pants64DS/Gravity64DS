@@ -334,7 +334,7 @@ void PlanetCam::ReactToInput(Camera& cam, const Player& player, const Vector3& p
 
 		if (playSounds && canPlayStopSound && rotationStopped)
 		{
-			Sound::UnkPlaySoundFunc(0xe);
+			Sound::PlayArchive2_2D_Alt(0xe);
 			canPlayStopSound = false;
 		}
 	}
@@ -407,7 +407,7 @@ bool PlanetCam::CalculateTransform(Matrix4x3& res, Camera& cam, Player& player)
 		camAltitude = std::clamp(camAltitude, playerAltitude + GetSetting<MIN_ALTITUDE_DIFF>(), playerAltitude + maxAltitudeDiff);
 
 		if (INPUT_ARR[0].buttonsPressed & Input::L)
-			Sound::UnkPlaySoundFunc(0x1a);
+			Sound::PlayArchive2_2D_Alt(0x1a);
 	}
 
 	targetAltitude = std::clamp(targetAltitude, playerAltitude - GetSetting<TARGET_ALTITUDE_RANGE>(), playerAltitude);
